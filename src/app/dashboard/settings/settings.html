@@ -1,0 +1,88 @@
+<div class="max-w-4xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Paramètres</h1>
+        <p class="text-gray-500">Gérez les paramètres de votre séjour</p>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 bg-red-50 border-b border-red-100">
+            <h2 class="text-lg font-semibold text-red-900 flex items-center gap-2">
+                <lucide-icon [img]="AlertTriangle" class="w-5 h-5"></lucide-icon>
+                Zone de danger
+            </h2>
+        </div>
+
+        <div class="p-6">
+            <div class="flex items-start justify-between gap-6">
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-gray-900 mb-1">Supprimer ce séjour</h3>
+                    <p class="text-sm text-gray-500">
+                        Une fois supprimé, toutes les données de ce séjour seront définitivement perdues.
+                        Cette action est irréversible.
+                    </p>
+                </div>
+                <button (click)="openDeleteConfirmation()"
+                    class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium shadow-sm hover:shadow-md whitespace-nowrap">
+                    <lucide-icon [img]="Trash2" class="w-4 h-4"></lucide-icon>
+                    Supprimer le séjour
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    @if (showDeleteConfirmation) {
+    <div class="fixed inset-0 z-50 overflow-y-auto" (click)="closeDeleteConfirmation()">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"></div>
+
+        <!-- Modal -->
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div (click)="$event.stopPropagation()"
+                class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all animate-in fade-in zoom-in-95 duration-200">
+
+                <!-- Header -->
+                <div class="text-center mb-6">
+                    <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <lucide-icon [img]="AlertTriangle" class="w-8 h-8 text-red-600"></lucide-icon>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Supprimer le séjour ?</h3>
+                    <p class="text-gray-500">
+                        Cette action est irréversible. Toutes les données du séjour seront définitivement supprimées.
+                    </p>
+                </div>
+
+                <!-- Warning List -->
+                <div class="mb-6 p-4 bg-red-50 rounded-lg border border-red-100">
+                    <p class="text-sm font-medium text-red-900 mb-2">Les éléments suivants seront supprimés :</p>
+                    <ul class="text-sm text-red-700 space-y-1 ml-4 list-disc">
+                        <li>Tous les participants</li>
+                        <li>Tous les repas planifiés</li>
+                        <li>Toutes les informations logistiques</li>
+                        <li>Toutes les données du séjour</li>
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3">
+                    <button type="button" (click)="closeDeleteConfirmation()" [disabled]="isDeleting"
+                        class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                        Annuler
+                    </button>
+                    <button type="button" (click)="confirmDelete()" [disabled]="isDeleting"
+                        class="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all font-medium shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        @if (isDeleting) {
+                        <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Suppression...</span>
+                        } @else {
+                        <lucide-icon [img]="Trash2" class="w-4 h-4"></lucide-icon>
+                        <span>Supprimer définitivement</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>

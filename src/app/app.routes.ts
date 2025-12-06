@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard';
 import { TripsComponent } from './trips/trips';
 import { PlaceholderComponent } from './dashboard/placeholder';
 import { ParticipantsComponent } from './dashboard/participants/participants';
+import { SettingsComponent } from './dashboard/settings/settings';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -26,6 +27,7 @@ export const routes: Routes = [
             { path: 'location', component: PlaceholderComponent },
             { path: 'meals', component: PlaceholderComponent },
             { path: 'logistics', component: PlaceholderComponent },
+            { path: 'settings', component: SettingsComponent },
         ]
     },
     // Redirect old /dashboard access to trips

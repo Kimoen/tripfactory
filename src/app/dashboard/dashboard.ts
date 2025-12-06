@@ -13,7 +13,10 @@ import {
     Link,
     Check,
     Copy,
-    LogOut
+    LogOut,
+    Settings,
+    Menu,
+    X
 } from 'lucide-angular';
 
 @Component({
@@ -37,9 +40,12 @@ export class DashboardComponent {
     readonly Check = Check;
     readonly Copy = Copy;
     readonly LogOut = LogOut;
+    readonly Menu = Menu;
+    readonly X = X;
 
     linkCopied = false;
     isGuestMode = false;
+    isMobileMenuOpen = false;
 
     readonly menuItems = [
         { label: 'Dashboard', icon: LayoutDashboard, route: './' },
@@ -48,6 +54,7 @@ export class DashboardComponent {
         { label: 'Lieu', icon: MapPin, route: 'location' },
         { label: 'Repas', icon: Utensils, route: 'meals' },
         { label: 'Logistique', icon: Package, route: 'logistics' },
+        { label: 'Paramètres', icon: Settings, route: 'settings' },
     ];
 
     ngOnInit() {
@@ -75,5 +82,13 @@ export class DashboardComponent {
         } catch (error) {
             console.error('Error during sign out:', error);
         }
+    }
+
+    toggleMobileMenu() {
+        this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    }
+
+    closeMobileMenu() {
+        this.isMobileMenuOpen = false;
     }
 }
