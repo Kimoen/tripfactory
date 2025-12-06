@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet, ActivatedRoute } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet, ActivatedRoute, Router } from '@angular/router';
+import { Auth, signOut } from '@angular/fire/auth';
 import {
     LucideAngularModule,
     LayoutDashboard,
@@ -11,7 +12,8 @@ import {
     ArrowLeft,
     Link,
     Check,
-    Copy
+    Copy,
+    LogOut
 } from 'lucide-angular';
 
 @Component({
@@ -27,11 +29,14 @@ import {
 })
 export class DashboardComponent {
     private route = inject(ActivatedRoute);
+    private router = inject(Router);
+    private auth = inject(Auth);
 
     readonly ArrowLeft = ArrowLeft;
     readonly Link = Link;
     readonly Check = Check;
     readonly Copy = Copy;
+    readonly LogOut = LogOut;
 
     linkCopied = false;
     isGuestMode = false;
@@ -60,5 +65,15 @@ export class DashboardComponent {
             this.linkCopied = true;
             setTimeout(() => this.linkCopied = false, 2000);
         });
+    }
+
+    async logout() {
+        try {
+            await signOut(this.auth);
+            console.log('User signed out');
+            this.router.navigate(['/login']);
+        } catch (error) {
+            console.error('Error during sign out:', error);
+        }
     }
 }
