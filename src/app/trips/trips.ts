@@ -1,56 +1,88 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Plane, Calendar, Users, ArrowRight, Plus } from 'lucide-angular';
-
-interface Trip {
-    id: string;
-    name: string;
-    description: string;
-    dates: string;
-    participants: number;
-    image: string;
-}
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TripService, Trip } from '../services/trip.service';
 
 @Component({
     selector: 'app-trips',
     standalone: true,
-    imports: [LucideAngularModule],
+    imports: [LucideAngularModule, CommonModule, FormsModule],
     templateUrl: './trips.html',
 })
-export class TripsComponent {
+export class TripsComponent implements OnInit {
     private router = inject(Router);
+    private tripService = inject(TripService);
+    private cdr = inject(ChangeDetectorRef);
 
     readonly Plus = Plus;
+    readonly Plane = Plane;
     readonly Calendar = Calendar;
     readonly Users = Users;
     readonly ArrowRight = ArrowRight;
 
-    readonly trips: Trip[] = [
-        {
-            id: 'trip-001',
-            name: 'Week-end au Ski',
-            description: 'Séjour dans les Alpes avec les collègues',
-            dates: '12 - 15 Janvier 2025',
-            participants: 8,
-            image: 'https://images.unsplash.com/photo-1487662994801-729bd178696b?q=80&w=2000&auto=format&fit=crop'
-        },
-        {
-            id: 'trip-002',
-            name: 'Vacances d\'Été',
-            description: 'Roadtrip en Italie',
-            dates: '01 - 15 Août 2025',
-            participants: 4,
-            image: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=2000&auto=format&fit=crop'
-        },
-        {
-            id: 'trip-003',
-            name: 'Séminaire Team Building',
-            description: 'Workshop et activités nature',
-            dates: '20 - 22 Mars 2025',
-            participants: 12,
-            image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=2000&auto=format&fit=crop'
+    trips: Trip[] = [];
+    loading = true;
+    showCreateModal = false;
+    newTripName = '';
+
+    async ngOnInit() {
+        await this.loadUserTrips();
+    }
+
+    async loadUserTrips() {
+        try {
+            this.trips = await this.tripService.getUserTrips();
+        } catch (error) {
+            console.error('Error loading trips:', error);
+            if (error instanceof Error && error.message === 'User not authenticated') {
+                this.router.navigate(['/login']);
+            }
+        } finally {
+            this.loading = false;
+            this.cdr.detectChanges();
         }
-    ];
+    }
+
+    openCreateModal() {
+        this.showCreateModal = true;
+        this.newTripName = '';
+    }
+
+    closeCreateModal() {
+        this.showCreateModal = false;
+        this.newTripName = '';
+    }
+
+    async submitNewTrip() {
+        if (!this.newTripName || this.newTripName.trim() === '') {
+            return;
+        }
+
+        try {
+            this.loading = true;
+            this.showCreateModal = false;
+            this.cdr.detectChanges();
+
+            const tripId = await this.tripService.createTrip({
+                name: this.newTripName.trim(),
+                description: '',
+                dates: '',
+                participants: 1,
+                image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop',
+                participantIds: []
+            });
+
+            // Redirect to the new trip's dashboard
+            this.router.navigate(['/dashboard', tripId]);
+        } catch (error) {
+            console.error('Error creating trip:', error);
+            alert('Erreur lors de la création du séjour');
+            this.loading = false;
+            this.cdr.detectChanges();
+        }
+    }
 
     openTrip(tripId: string) {
         this.router.navigate(['/dashboard', tripId]);

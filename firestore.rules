@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Règles pour les voyages (trips)
+    match /trips/{tripId} {
+      // Lecture : propriétaire ou participant
+      allow read: if request.auth != null && (
+        resource.data.ownerId == request.auth.uid ||
+        request.auth.uid in resource.data.participantIds
+      );
+      
+      // Création : utilisateur authentifié, doit être le propriétaire
+      allow create: if request.auth != null && 
+        request.resource.data.ownerId == request.auth.uid;
+      
+      // Mise à jour : uniquement le propriétaire
+      allow update: if request.auth != null && 
+        resource.data.ownerId == request.auth.uid;
+      
+      // Suppression : uniquement le propriétaire
+      allow delete: if request.auth != null && 
+        resource.data.ownerId == request.auth.uid;
+    }
+    
+    // Règles pour les participants
+    match /trips/{tripId}/participants/{participantId} {
+      // Lecture : propriétaire du voyage ou participant
+      allow read: if request.auth != null && (
+        get(/databases/$(database)/documents/trips/$(tripId)).data.ownerId == request.auth.uid ||
+        request.auth.uid in get(/databases/$(database)/documents/trips/$(tripId)).data.participantIds
+      );
+      
+      // Écriture : uniquement le propriétaire du voyage
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/trips/$(tripId)).data.ownerId == request.auth.uid;
+    }
+    
+    // Règles pour les repas
+    match /trips/{tripId}/meals/{mealId} {
+      // Lecture : propriétaire du voyage ou participant
+      allow read: if request.auth != null && (
+        get(/databases/$(database)/documents/trips/$(tripId)).data.ownerId == request.auth.uid ||
+        request.auth.uid in get(/databases/$(database)/documents/trips/$(tripId)).data.participantIds
+      );
+      
+      // Écriture : propriétaire du voyage ou participant
+      allow write: if request.auth != null && (
+        get(/databases/$(database)/documents/trips/$(tripId)).data.ownerId == request.auth.uid ||
+        request.auth.uid in get(/databases/$(database)/documents/trips/$(tripId)).data.participantIds
+      );
+    }
+    
+    // Règles pour la logistique
+    match /trips/{tripId}/logistics/{logisticId} {
+      // Lecture : propriétaire du voyage ou participant
+      allow read: if request.auth != null && (
+        get(/databases/$(database)/documents/trips/$(tripId)).data.ownerId == request.auth.uid ||
+        request.auth.uid in get(/databases/$(database)/documents/trips/$(tripId)).data.participantIds
+      );
+      
+      // Écriture : propriétaire du voyage ou participant
+      allow write: if request.auth != null && (
+        get(/databases/$(database)/documents/trips/$(tripId)).data.ownerId == request.auth.uid ||
+        request.auth.uid in get(/databases/$(database)/documents/trips/$(tripId)).data.participantIds
+      );
+    }
+    
+    // Par défaut, tout est refusé
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
