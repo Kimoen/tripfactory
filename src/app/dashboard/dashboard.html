@@ -1,0 +1,64 @@
+<div class="flex h-screen bg-gray-100 font-sans">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md flex flex-col z-10 transition-all duration-300">
+        <div class="p-6 flex items-center gap-3 border-b border-gray-100">
+            <a routerLink="/trips"
+                class="p-1 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-gray-50 transition-all cursor-pointer"
+                title="Retour aux séjours">
+                <lucide-icon [img]="ArrowLeft" class="w-5 h-5"></lucide-icon>
+            </a>
+            <span
+                class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 tracking-tight">
+                Trip Factory
+            </span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-2">
+            @for (item of menuItems; track item.label) {
+            <a [routerLink]="item.route" routerLinkActive="bg-indigo-50 text-indigo-600 shadow-sm"
+                [routerLinkActiveOptions]="{exact: item.route === './'}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-all duration-200 group cursor-pointer">
+                <lucide-icon [img]="item.icon" class="w-5 h-5 transition-transform group-hover:scale-110"></lucide-icon>
+                <span class="font-medium">{{ item.label }}</span>
+            </a>
+            }
+        </nav>
+
+        <div class="px-3 pt-2 pb-6">
+            <button (click)="copyInviteLink()"
+                class="relative w-full flex items-center justify-between gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors group">
+                <div class="flex items-center gap-3">
+                    <lucide-icon [img]="Link" class="w-5 h-5"></lucide-icon>
+                    <span class="font-medium text-sm">Lien d'invitation</span>
+                </div>
+                <lucide-icon [img]="Copy"
+                    class="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity"></lucide-icon>
+
+                @if (linkCopied) {
+                <div
+                    class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-bottom-2 duration-200">
+                    Lien copié !
+                </div>
+                }
+            </button>
+        </div>
+
+        <div class="p-4 border-t border-gray-100">
+            <div class="flex items-center gap-3 px-4 py-3 text-sm text-gray-500">
+                <div
+                    class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                    J
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-gray-800">Julian</span>
+                    <span class="text-xs">Admin</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto bg-gray-50 relative p-8">
+        <router-outlet></router-outlet>
+    </main>
+</div>
