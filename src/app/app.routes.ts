@@ -5,14 +5,20 @@ import { DashboardComponent } from './dashboard/dashboard';
 import { TripsComponent } from './trips/trips';
 import { PlaceholderComponent } from './dashboard/placeholder';
 import { ParticipantsComponent } from './dashboard/participants/participants';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: '', component: HomepageComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'trips', component: TripsComponent },
+    {
+        path: 'trips',
+        component: TripsComponent,
+        canActivate: [authGuard]
+    },
     {
         path: 'dashboard/:tripId',
         component: DashboardComponent,
+        canActivate: [authGuard],
         children: [
             { path: '', component: PlaceholderComponent }, // Default dashboard view
             { path: 'summary', component: PlaceholderComponent },

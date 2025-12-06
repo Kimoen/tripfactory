@@ -34,6 +34,7 @@ export class DashboardComponent {
     readonly Copy = Copy;
 
     linkCopied = false;
+    isGuestMode = false;
 
     readonly menuItems = [
         { label: 'Dashboard', icon: LayoutDashboard, route: './' },
@@ -43,6 +44,13 @@ export class DashboardComponent {
         { label: 'Repas', icon: Utensils, route: 'meals' },
         { label: 'Logistique', icon: Package, route: 'logistics' },
     ];
+
+    ngOnInit() {
+        // Check if accessing in guest mode
+        this.route.queryParams.subscribe(params => {
+            this.isGuestMode = params['mode'] === 'guest';
+        });
+    }
 
     copyInviteLink() {
         const tripId = this.route.snapshot.paramMap.get('tripId');
